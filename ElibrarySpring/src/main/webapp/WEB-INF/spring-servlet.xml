@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema//context/spring-context.xsd
+   http://www.springframework.org/schema/util
+   http://www.springframework.org/schema//util/spring-util.xsd
+    http://www.springframework.org/schema/tx
+   http://www.springframework.org/schema//tx/spring-tx.xsd">
+
+	<context:component-scan
+		base-package="com.elibrary.*" />
+
+	<tx:annotation-driven />
+
+	<bean
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		name="data">
+
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/elibrary_spring"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+
+	</bean>
+	<bean
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		name="session">
+
+		<property name="dataSource" ref="data"></property>
+
+		<property name="annotatedClasses">
+
+			<list>
+				<value>com.elibrary.model.Admin</value>
+				<value>com.elibrary.model.Librarian</value>
+				<value>com.elibrary.model.Book</value>
+				<value>com.elibrary.model.IssuedBook</value>
+			</list>
+
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+
+		</property>
+	</bean>
+
+	<bean name="hibernatetemplate"
+		class="org.springframework.orm.hibernate5.HibernateTemplate">
+		<property name="sessionFactory" ref="session"></property>
+	</bean>
+
+
+
+	<bean name="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="session"></property>
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		name="viewResolver">
+		<property name="prefix" value="/WEB-INF/views/"></property>
+		<property name="suffix" value=".jsp"></property>
+
+	</bean>
+</beans>
